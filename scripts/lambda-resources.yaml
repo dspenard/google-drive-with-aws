@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda resources needed for a demo to pull Excel files from S3 and then save to Google Drive
+
+Parameters:
+  ParentStackName:
+    Description: Name of the stack that created the S3 bucket and SSM parameters
+    Type: String
+  
+Resources:
+  GoogleDriveIntegrator:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: google-drive-lambda
+      Description: Function for grabbing Excel files from S3 and pushing to a shared Google drive
+      MemorySize: 256
+      Timeout: 60
+      Handler: google-drive-lambda.main_handler
+      Runtime: python3.7
+      CodeUri:
+        Bucket:
+          Fn::ImportValue:
+            Fn::Sub: ${ParentStackName}-LambdaAndReportBucket
+        Key: google-drive-lambda.zip
+      Layers: 
+      - !Ref PythonLayer
+      Role: !GetAtt GoogleDriveLambdaIAMRole.Arn      
+      Environment:
+        Variables:
+          REPORTS_BUCKET:
+            Fn::ImportValue:
+              Fn::Sub: ${ParentStackName}-LambdaAndReportBucket
+          GOOGLE_CREDENTIALS_PARAMETER:
+            Fn::ImportValue:
+              Fn::Sub: ${ParentStackName}-GoogleServiceAccountCredentials
+          GOOGLE_SHARED_FOLDER_ID_PARAMETER:
+            Fn::ImportValue:
+              Fn::Sub: ${ParentStackName}-GoogleDriveFolderId
+
+  PythonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: google-drive-python-layer
+      Description: Layer with Python dependencies required by google-drive-lambda
+      ContentUri:
+        Bucket:
+          Fn::ImportValue:
+            Fn::Sub: ${ParentStackName}-LambdaAndReportBucket
+        Key: google-api-python-layer.zip
+      CompatibleRuntimes:
+        - python3.7
+      LicenseInfo: MIT
+      RetentionPolicy: Retain
+
+  GoogleDriveLambdaIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GoogleDrive-LambdaExecutionRole
+      Path: /
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - s3:GetObject
+            - s3:GetObjectAcl
+            Resource:
+              Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - Fn::ImportValue:
+                    Fn::Sub: ${ParentStackName}-LambdaAndReportBucket
+                - '/*'
+          - Effect: Allow
+            Action:
+            - ssm:GetParameter
+            Resource:
+              Fn::Sub: arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/google-*
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: AllowLambdaServiceToAssumeRole
+          Effect: Allow
+          Action:
+          - sts:AssumeRole
+          Principal:
+            Service:
+            - lambda.amazonaws.com

@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Creates a non-public S3 bucket and two dummy Parameter Store values needed for this Google Drive demo
+
+# NOTE: The Parameter Store parameter for the Google Service Account credentials should really be a secure string,
+# but CloudFormation doesn't support it.  I'm using a string just for demo purposes, so don't do that in a real system.
+
+Parameters:
+  LambdaAndReportBucket:
+    Description: S3 bucket used for this demo to contain the Lamba zip file and Layer zip file, and the Excel files to be pushed to Google Drive
+    Type: String
+  GoogleServiceAccountCredentials:
+    Description: Name of Parameter Store parameter containing the Google service account credentials, to be manually pasted in with the console
+    Type: String
+    Default: google-service-account-credentials
+  GoogleDriveFolderId:
+    Description: Name of Parameter Store parameter containing the ID of the Google Drive shared folder, to be manually pasted in with the console
+    Type: String
+    Default: google-drive-folder-id
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      AccessControl: Private
+      BucketName: !Ref LambdaAndReportBucket
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true        
+      VersioningConfiguration:
+        Status: Enabled      
+
+  ServiceAccountParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Google service account used to access Google Drive
+      Name: !Ref GoogleServiceAccountCredentials
+      Type: String
+      Value: paste in real value via the console
+
+  FolderIdParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: ID for the shared folder in Google Drive, where files will be pushed from S3 via a Lambda function
+      Name: !Ref GoogleDriveFolderId
+      Type: String
+      Value: paste in real value via the console
+
+Outputs:
+  LambdaAndReportBucket:
+    Description: S3 bucket used for this demo to contain the Lamba zip file and Layer zip file, and the Excel files to be pushed to Google Drive
+    Value: !Ref LambdaAndReportBucket
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-LambdaAndReportBucket
+  GoogleServiceAccountCredentials:
+    Description: Name of Parameter Store parameter containing the Google service account credentials, to be manually pasted in with the console
+    Value: !Ref GoogleServiceAccountCredentials
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-GoogleServiceAccountCredentials
+  GoogleDriveFolderId:
+    Description: Name of Parameter Store parameter containing the ID of the Google Drive shared folder, to be manually pasted in with the console
+    Value: !Ref GoogleDriveFolderId
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-GoogleDriveFolderId
