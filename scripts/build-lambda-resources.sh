@@ -6,5 +6,4 @@ aws cloudformation create-stack \
     --stack-name google-drive-lambda \
     --template-body file://lambda-resources.yaml \
     --capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM \
-    --parameters ParameterKey=AWSAccount,ParameterValue=649389088215 \
-        ParameterKey=ParentStackName,ParameterValue=google-drive-bucket-and-ssm
+    --parameters ParameterKey=ParentStackName,ParameterValue=google-drive-bucket-and-ssm
