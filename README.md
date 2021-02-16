@@ -12,6 +12,9 @@ Sorry, I do plan to clean this up and provide details on everything with screens
 - Google Service Account created, Google Drive API enabled for a Google Drive, and a shared folder created with write permission given to the service account
 
 #### Steps
+
+Please note that this is not fully automated and the scripts can be run one-by-one, but they require a few manual changes before doing so.  Each of the Bash files has details on what might need adjusting before running.
+
 - clone this repo
 - cd scripts
 - bash build-bucket-and-ssm-resources.sh
