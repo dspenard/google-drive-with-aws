@@ -17,7 +17,8 @@ aws s3 cp google-api-python-layer.zip s3://your-bucket-name
 
 # zip the Lambda file and push to S3
 #
+cd ../src
 rm -f google-drive-lambda.zip
-zip google-drive-lambda.zip ../src/google-drive-lambda.py
+zip google-drive-lambda.zip google-drive-lambda.py
 
 aws s3 cp google-drive-lambda.zip s3://your-bucket-name
