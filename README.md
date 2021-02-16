@@ -23,3 +23,8 @@ Please note that this is not fully automated and the scripts can be run one-by-o
 - bash build-packages.sh
 - bash build-lambda-resources.sh
 - go to the Lambda function and create a test using testdata/lambda-test.json to test the function
+
+#### Issues
+
+If you get the error 'Lambda was unable to decrypt the environment variables because KMS access was denied', just redeploy the Lambda function and it will go away.  I haven't had time to look into this further.
+https://github.com/serverless/examples/issues/279
