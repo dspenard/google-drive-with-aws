@@ -57,8 +57,10 @@ def get_folder_id(folder_id_parameter):
     
     Returns: folder ID string    
     """
+    
+    # Note that WithDecryption=True would be set if using a SecureString in Parameter Store
     ssm_client = boto3.client('ssm')
-    return ssm_client.get_parameter(Name=folder_id_parameter, WithDecryption=True)['Parameter']['Value']    
+    return ssm_client.get_parameter(Name=folder_id_parameter, WithDecryption=False)['Parameter']['Value']    
 
     
 def upload_file(service, file_name_with_path, file_name, description, folder_id, mime_type):  
