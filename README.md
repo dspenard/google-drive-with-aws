@@ -3,7 +3,8 @@ CloudFormation templates, Lambda function, and scripts to demo how to pull files
 
 ## Instructions
 
-Sorry, I do plan to clean this up and provide details on everything with screenshots and explanations.
+Please see my Medium article with step-by-step instructions with more detail.
+https://dspenard.medium.com/push-aws-s3-files-to-google-drive-dabf5005a278
 
 #### Requirements to set up the demo
 - Python3 installed
@@ -15,14 +16,15 @@ Sorry, I do plan to clean this up and provide details on everything with screens
 
 Please note that this is not fully automated and the scripts can be run one-by-one, but they require a few manual changes before doing so.  Each of the Bash files has details on what might need adjusting before running.
 
-- clone this repo
-- cd scripts
+- git clone https://github.com/dspenard/google-drive-with-aws.git
+- cd google-drive-with-aws/scripts
 - bash build-bucket-and-ssm-resources.sh
 - modify SSM parameters via console to enter your Google service account credentials json and the shared drive ID
 - bash copy-test-files.sh
 - bash build-packages.sh
 - bash build-lambda-resources.sh
 - go to the Lambda function and create a test using testdata/lambda-test.json to test the function
+- clean up the resources
 
 #### Issues
 
