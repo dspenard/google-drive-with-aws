@@ -1,6 +1,8 @@
 # google-drive-with-aws
 CloudFormation templates, Lambda function, and scripts to demo how to pull files from S3 and push to Google Drive.
 
+![Google Drive Lamba](https://user-images.githubusercontent.com/2858742/119348215-8f336f00-bc6a-11eb-9cf9-43cda85259a4.jpeg)
+
 ## Instructions
 
 Please see my Medium article with step-by-step instructions with more detail.
